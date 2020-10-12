@@ -1,5 +1,5 @@
 import { catchError, switchMap, map } from 'rxjs/operators';
-import { Observable, throwError, from, of } from 'rxjs';
+import { Observable, from, of } from 'rxjs';
 import { IUser } from './../models/user.interface';
 import { UserEntity } from './../models/user.entity';
 import { Injectable } from '@nestjs/common';
@@ -24,26 +24,40 @@ export class UserService {
           newUser.password = hashedPass;
           return from(this.userRepository.save(newUser)).pipe(
             map((user: IUser) => {
-              console.log(user);
               const { password, ...result } = user;
               return result;
             }),
             catchError(err => of({ error: err.message })),
           );
         }),
-        catchError(err => throwError(err.message)),
+        catchError(err => of({ error: err.message })),
       );
     } else {
-      return throwError(
-        'Username and password lengths must be between 3 and 10 characters!',
-      );
+      return of({
+        error:
+          'Username and password lengths must be between 3 and 10 characters!',
+      });
     }
   }
-  findOne(id: number): Observable<IUser> {
-    return from(this.userRepository.findOne(id));
+  findOne(id: number): Observable<IUser | { error: string }> {
+    return from(this.userRepository.findOne(id)).pipe(
+      map(user => {
+        const { password, ...result } = user;
+        return result;
+      }),
+      catchError(err => of({ error: err.message })),
+    );
   }
-  findAll(): Observable<IUser[]> {
-    return from(this.userRepository.find());
+  findAll(): Observable<IUser[] | { error: string }> {
+    return from(this.userRepository.find()).pipe(
+      map((users: IUser[]) => {
+        return users.map(item => {
+          const { password, ...result } = item;
+          return result;
+        });
+      }),
+      catchError(err => of({ error: err.message })),
+    );
   }
   deleteOne(id: number): Observable<any> {
     return from(this.userRepository.delete(id));

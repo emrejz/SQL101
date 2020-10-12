@@ -1,5 +1,4 @@
-import { catchError, map } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { IUser } from './../models/user.interface';
 import { UserService } from './../services/user.service';
 import {
@@ -22,11 +21,11 @@ export class UserController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number): Observable<IUser> {
+  findOne(@Param('id') id: number): Observable<IUser | { error: string }> {
     return this.userService.findOne(id);
   }
   @Get()
-  findAll(): Observable<IUser[]> {
+  findAll(): Observable<IUser[] | { error: string }> {
     return this.userService.findAll();
   }
   @Delete(':id')
