@@ -9,7 +9,7 @@ export class AuthService {
   constructor(private readonly jwtService: JwtService) {}
 
   generateToken(user: IUser): Observable<string> {
-    return from(this.jwtService.sign(user));
+    return from(this.jwtService.signAsync(user));
   }
   hashPassword(password: string): Observable<string> {
     return from<string>(bcryptjs.hash(password, 10));
