@@ -1,4 +1,4 @@
-import { catchError, switchMap, map } from 'rxjs/operators';
+import { switchMap, map } from 'rxjs/operators';
 import { Observable, from, of } from 'rxjs';
 import { IUser } from './../models/user.interface';
 import { UserEntity } from './../models/user.entity';
@@ -14,8 +14,7 @@ export class UserService {
     private readonly userRepository: Repository<UserEntity>,
     private readonly authService: AuthService,
   ) {}
-  create(user: IUser): Observable<IUser | { error: string }> {
-    let { username, password } = user;
+  create({ username, password }: IUser): Observable<IUser | { error: string }> {
     if (username && password) {
       username = username.trim();
       password = password.trim();
@@ -27,10 +26,8 @@ export class UserService {
             newUser.password = hashedPass;
             return from(this.userRepository.save(newUser)).pipe(
               map((user: IUser) => this.safeUserResponse(user)),
-              catchError(err => of({ error: err.message })),
             );
           }),
-          catchError(err => of({ error: err.message })),
         );
       }
     }
@@ -39,36 +36,33 @@ export class UserService {
         'Username and password lengths must be between 3 and 10 characters!',
     });
   }
-  findOne(id: number): Observable<IUser | { error: string }> {
+  findOne(id: number): Observable<IUser> {
     return from(this.userRepository.findOne(id)).pipe(
       map((user: IUser) => this.safeUserResponse(user)),
-      catchError(err => of({ error: err.message })),
     );
   }
-  findAll(): Observable<IUser[] | { error: string }> {
+  findAll(): Observable<IUser[]> {
     return from(this.userRepository.find()).pipe(
       map((users: IUser[]) => {
         return users.map((user: IUser) => this.safeUserResponse(user));
       }),
-      catchError(err => of({ error: err.message })),
     );
   }
-  deleteOne(id: number): Observable<IUser | { error: string }> {
+  deleteOne(id: number): Observable<IUser> {
     return from(this.findOne(id)).pipe(
       switchMap((user: IUser) => {
-        return from(this.userRepository.delete(id)).pipe(
-          map(res => user),
-          catchError(err => of({ error: err.message })),
-        );
+        return from(this.userRepository.delete(id)).pipe(map(res => user));
       }),
     );
   }
-  updateOne(id: number, user: IUser): Observable<IUser | { error: string }> {
-    let { username } = user;
+  updateOne(
+    id: number,
+    { username }: IUser,
+  ): Observable<IUser | { error: string }> {
     if (username) {
       username = username.trim();
       if (username.length > 3) {
-        return from(this.userRepository.findOne({ where: { username } })).pipe(
+        return from(this.userRepository.findOne({ username })).pipe(
           switchMap(result => {
             if (!result) {
               return from(
@@ -76,23 +70,47 @@ export class UserService {
                   username,
                   updatedAt: new Date(),
                 }),
-              ).pipe(
-                map(res => user),
-                catchError(err => of({ error: err.message })),
-              );
+              ).pipe(map(res => ({ id, username })));
             } else {
               return of({
                 error: 'Username already exists. Please try another one!',
               });
             }
           }),
-          catchError(err => of({ error: err.message })),
         );
       }
     }
     return of({
       error: 'Username length must be between 3 and 10 characters!',
     });
+  }
+
+  login({ username, password }: IUser): Observable<string> {
+    return from(this.userRepository.findOne({ username })).pipe(
+      switchMap((user: IUser) => {
+        if (user) {
+          return this.authService
+            .comparePasswords(password, user.password)
+            .pipe(
+              switchMap(isMatched => {
+                if (isMatched) {
+                  return this.authService
+                    .generateToken(this.safeUserResponse(user))
+                    .pipe(
+                      map(token => {
+                        return token;
+                      }),
+                    );
+                } else {
+                  throw new Error('Wrong password!');
+                }
+              }),
+            );
+        } else {
+          throw new Error('User does not exist!');
+        }
+      }),
+    );
   }
   safeUserResponse(user: IUser) {
     if (user) {
