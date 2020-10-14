@@ -4,4 +4,11 @@ export interface IUser {
   password?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  role?: EUserRole;
+}
+
+export enum EUserRole {
+  admin = 'admin',
+  editor = 'editor',
+  user = 'user',
 }
