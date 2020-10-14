@@ -65,12 +65,12 @@ export class UserController {
     );
   }
   @UseGuards(JwtAuthGuard, UserIdGuard)
-  @Put(':id')
-  updateOne(
+  @Put('username/:id')
+  updateUsername(
     @Param('id') id: number,
     @Body() user: IUser,
   ): Observable<IUser | { error: string }> {
-    return this.userService.updateOne(id, user).pipe(
+    return this.userService.updateUsername(id, user).pipe(
       map(res => res),
       catchError(err => of({ error: err.message })),
     );
