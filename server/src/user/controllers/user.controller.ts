@@ -1,6 +1,6 @@
 import { catchError, map } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
-import { IUser } from './../models/user.interface';
+import { EUserRole, IUser } from './../models/user.interface';
 import { UserService } from './../services/user.service';
 import {
   Body,
@@ -10,7 +10,11 @@ import {
   Param,
   Delete,
   Put,
+  UseGuards,
 } from '@nestjs/common';
+import { hasRoles } from 'src/auth/decorators/auth.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @Controller('users')
 export class UserController {
@@ -39,6 +43,8 @@ export class UserController {
       catchError(err => of({ error: err.message })),
     );
   }
+  @hasRoles(EUserRole.admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
   findAll(): Observable<IUser[] | { error: string }> {
     return this.userService.findAll().pipe(
