@@ -48,10 +48,14 @@ export class UserService {
       }),
     );
   }
-  deleteUser(id: number): Observable<IUser> {
-    return from(this.userRepository.findOne(id)).pipe(
-      switchMap((user: IUser) => {
-        return from(this.userRepository.delete(id)).pipe(map(res => user));
+  deleteUser(id: number): Observable<IUser | { error: string }> {
+    return from(this.userRepository.delete(id)).pipe(
+      map(res => {
+        if (res.affected) {
+          return { id };
+        } else {
+          return { error: 'Something went wrong!' };
+        }
       }),
     );
   }
@@ -99,7 +103,15 @@ export class UserService {
                 password: hashedPassword,
                 updatedAt: new Date(),
               }),
-            ).pipe(map(res => ({ id }))),
+            ).pipe(
+              map(res => {
+                if (res.affected) {
+                  return { id };
+                } else {
+                  return { error: 'Something went wrong!' };
+                }
+              }),
+            ),
           ),
         );
       }
@@ -118,7 +130,15 @@ export class UserService {
               ...data,
               updatedAt: new Date(),
             }),
-          ).pipe(map(res => data));
+          ).pipe(
+            map(res => {
+              if (res.affected) {
+                return data;
+              } else {
+                return { error: 'Something went wrong!' };
+              }
+            }),
+          );
         } else {
           return of({
             error: 'Username already exists. Please try another one!',
