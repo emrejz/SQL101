@@ -36,20 +36,20 @@ export class UserService {
         'Username and password lengths must be between 3 and 10 characters!',
     });
   }
-  findOne(id: number): Observable<IUser> {
+  findUser(id: number): Observable<IUser> {
     return from(this.userRepository.findOne(id)).pipe(
       map((user: IUser) => this.safeUserResponse(user)),
     );
   }
-  findAll(): Observable<IUser[]> {
+  findAllUser(): Observable<IUser[]> {
     return from(this.userRepository.find()).pipe(
       map((users: IUser[]) => {
         return users.map((user: IUser) => this.safeUserResponse(user));
       }),
     );
   }
-  deleteOne(id: number): Observable<IUser> {
-    return from(this.findOne(id)).pipe(
+  deleteUser(id: number): Observable<IUser> {
+    return from(this.userRepository.findOne(id)).pipe(
       switchMap((user: IUser) => {
         return from(this.userRepository.delete(id)).pipe(map(res => user));
       }),

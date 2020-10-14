@@ -24,9 +24,10 @@ export class UserController {
   @hasRoles(EUserRole.admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete('admin')
-  deleteUser(@Body() { id }: IUser): Observable<IUser | { error: string }> {
-    console.log(id);
-    return this.userService.deleteOne(id).pipe(
+  deleteUserByAdmin(
+    @Body() { id }: IUser,
+  ): Observable<IUser | { error: string }> {
+    return this.userService.deleteUser(id).pipe(
       map(res => res),
       catchError(err => of({ error: err.message })),
     );
@@ -35,7 +36,9 @@ export class UserController {
   @hasRoles(EUserRole.admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Put('admin')
-  updateUser(@Body() user: IUser): Observable<IUser | { error: string }> {
+  updateUserByAdmin(
+    @Body() user: IUser,
+  ): Observable<IUser | { error: string }> {
     return this.userService.updateUser(user).pipe(
       map(res => res),
       catchError(err => of({ error: err.message })),
@@ -62,8 +65,8 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  findOne(@Param('id') id: number): Observable<IUser | { error: string }> {
-    return this.userService.findOne(id).pipe(
+  findUser(@Param('id') id: number): Observable<IUser | { error: string }> {
+    return this.userService.findUser(id).pipe(
       map(res => res),
       catchError(err => of({ error: err.message })),
     );
@@ -72,8 +75,8 @@ export class UserController {
   @hasRoles(EUserRole.admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
-  findAll(): Observable<IUser[] | { error: string }> {
-    return this.userService.findAll().pipe(
+  findAllUser(): Observable<IUser[] | { error: string }> {
+    return this.userService.findAllUser().pipe(
       map(res => res),
       catchError(err => of({ error: err.message })),
     );
@@ -81,8 +84,10 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard, UserIdGuard)
   @Delete(':id')
-  deleteOne(@Param('id') id: number): Observable<IUser | { error: string }> {
-    return this.userService.deleteOne(id).pipe(
+  deleteUserByUser(
+    @Param('id') id: number,
+  ): Observable<IUser | { error: string }> {
+    return this.userService.deleteUser(id).pipe(
       map(res => res),
       catchError(err => of({ error: err.message })),
     );
