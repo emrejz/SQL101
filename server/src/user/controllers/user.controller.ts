@@ -21,6 +21,27 @@ import { UserIdGuard } from 'src/auth/guards/userId.guard';
 export class UserController {
   constructor(private userService: UserService) {}
 
+  @hasRoles(EUserRole.admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Delete('admin')
+  deleteUser(@Body() { id }: IUser): Observable<IUser | { error: string }> {
+    console.log(id);
+    return this.userService.deleteOne(id).pipe(
+      map(res => res),
+      catchError(err => of({ error: err.message })),
+    );
+  }
+
+  @hasRoles(EUserRole.admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Put('admin')
+  updateUser(@Body() user: IUser): Observable<IUser | { error: string }> {
+    return this.userService.updateUser(user).pipe(
+      map(res => res),
+      catchError(err => of({ error: err.message })),
+    );
+  }
+
   @Post()
   create(@Body() user: IUser): Observable<IUser | { error: string }> {
     return this.userService.create(user).pipe(
@@ -28,6 +49,7 @@ export class UserController {
       catchError(err => of({ error: err.message })),
     );
   }
+
   @Post('login')
   login(
     @Body() user: IUser,
@@ -38,7 +60,7 @@ export class UserController {
     );
   }
 
-  @UseGuards(JwtAuthGuard, UserIdGuard)
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id') id: number): Observable<IUser | { error: string }> {
     return this.userService.findOne(id).pipe(
@@ -46,6 +68,7 @@ export class UserController {
       catchError(err => of({ error: err.message })),
     );
   }
+
   @hasRoles(EUserRole.admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
@@ -64,6 +87,7 @@ export class UserController {
       catchError(err => of({ error: err.message })),
     );
   }
+
   @UseGuards(JwtAuthGuard, UserIdGuard)
   @Put('username/:id')
   updateUsername(
@@ -75,6 +99,7 @@ export class UserController {
       catchError(err => of({ error: err.message })),
     );
   }
+
   @UseGuards(JwtAuthGuard, UserIdGuard)
   @Put('password/:id')
   updatePassword(
@@ -82,15 +107,6 @@ export class UserController {
     @Body() user: IUser,
   ): Observable<IUser | { error: string }> {
     return this.userService.updatePassword(id, user).pipe(
-      map(res => res),
-      catchError(err => of({ error: err.message })),
-    );
-  }
-  @hasRoles('admin')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Put()
-  updateUser(@Body() user: IUser): Observable<IUser | { error: string }> {
-    return this.userService.updateUser(user).pipe(
       map(res => res),
       catchError(err => of({ error: err.message })),
     );
