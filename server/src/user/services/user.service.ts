@@ -192,7 +192,7 @@ export class UserService {
         'user.createdAt',
         'user.updatedAt',
       ])
-      .orderBy(order);
+      .orderBy(order ? order : 'id');
     return from(paginate<IUser>(queryBuilder, options));
   }
 
