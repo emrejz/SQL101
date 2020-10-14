@@ -55,7 +55,8 @@ export class UserService {
       }),
     );
   }
-  updateOne(
+
+  updateUsername(
     id: number,
     { username }: IUser,
   ): Observable<IUser | { error: string }> {
