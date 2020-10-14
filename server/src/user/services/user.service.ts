@@ -6,6 +6,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuthService } from 'src/auth/services/auth.service';
+import {
+  paginate,
+  Pagination,
+  IPaginationOptions,
+} from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class UserService {
@@ -174,6 +179,23 @@ export class UserService {
       }),
     );
   }
+  paginate(
+    options: IPaginationOptions,
+    order: string,
+  ): Observable<Pagination<IUser>> {
+    const queryBuilder = this.userRepository
+      .createQueryBuilder('user')
+      .select([
+        'user.id',
+        'user.username',
+        'user.role',
+        'user.createdAt',
+        'user.updatedAt',
+      ])
+      .orderBy(order);
+    return from(paginate<IUser>(queryBuilder, options));
+  }
+
   safeUserResponse(user: IUser) {
     if (user) {
       const { password, ...result } = user;
