@@ -15,6 +15,7 @@ import {
 import { hasRoles } from 'src/auth/decorators/auth.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { UserIdGuard } from 'src/auth/guards/userId.guard';
 
 @Controller('users')
 export class UserController {
@@ -36,6 +37,8 @@ export class UserController {
       catchError(err => of({ error: err.message })),
     );
   }
+
+  @UseGuards(JwtAuthGuard, UserIdGuard)
   @Get(':id')
   findOne(@Param('id') id: number): Observable<IUser | { error: string }> {
     return this.userService.findOne(id).pipe(
@@ -52,6 +55,8 @@ export class UserController {
       catchError(err => of({ error: err.message })),
     );
   }
+
+  @UseGuards(JwtAuthGuard, UserIdGuard)
   @Delete(':id')
   deleteOne(@Param('id') id: number): Observable<IUser | { error: string }> {
     return this.userService.deleteOne(id).pipe(
@@ -59,6 +64,7 @@ export class UserController {
       catchError(err => of({ error: err.message })),
     );
   }
+  @UseGuards(JwtAuthGuard, UserIdGuard)
   @Put(':id')
   updateOne(
     @Param('id') id: number,
