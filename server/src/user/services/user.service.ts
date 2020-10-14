@@ -108,6 +108,25 @@ export class UserService {
       error: 'Password must be at least 4 characters!',
     });
   }
+  updateUser(user: IUser): Observable<IUser | { error: string }> {
+    const { password, createdAt, ...data } = user;
+    return from(this.userRepository.findOne({ username: data.username })).pipe(
+      switchMap(result => {
+        if (!result) {
+          return from(
+            this.userRepository.update(data.id, {
+              ...data,
+              updatedAt: new Date(),
+            }),
+          ).pipe(map(res => data));
+        } else {
+          return of({
+            error: 'Username already exists. Please try another one!',
+          });
+        }
+      }),
+    );
+  }
   login({ username, password }: IUser): Observable<string> {
     return from(this.userRepository.findOne({ username })).pipe(
       switchMap((user: IUser) => {
