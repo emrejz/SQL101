@@ -85,7 +85,29 @@ export class UserService {
       error: 'Username length must be between 3 and 10 characters!',
     });
   }
-
+  updatePassword(
+    id: number,
+    { password }: IUser,
+  ): Observable<IUser | { error: string }> {
+    if (password) {
+      password = password.trim();
+      if (password.length > 3) {
+        return this.authService.hashPassword(password).pipe(
+          switchMap((hashedPassword: string) =>
+            from(
+              this.userRepository.update(id, {
+                password: hashedPassword,
+                updatedAt: new Date(),
+              }),
+            ).pipe(map(res => ({ id }))),
+          ),
+        );
+      }
+    }
+    return of({
+      error: 'Password must be at least 4 characters!',
+    });
+  }
   login({ username, password }: IUser): Observable<string> {
     return from(this.userRepository.findOne({ username })).pipe(
       switchMap((user: IUser) => {
