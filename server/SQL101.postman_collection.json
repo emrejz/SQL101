@@ -7,9 +7,26 @@
 	"item": [
 		{
 			"name": "GET USER LIST",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsInVzZXJuYW1lIjoiZW1yZSIsInJvbGUiOiJhZG1pbiIsImNyZWF0ZWRBdCI6IjIwMjAtMTAtMTNUMTU6MTM6MjIuODQ1WiIsInVwZGF0ZWRBdCI6IjIwMjAtMTAtMTNUMTU6MTM6MjIuODQ1WiIsImlhdCI6MTYwMjYxNjI3MCwiZXhwIjoxNjAzMjIxMDcwfQ.WX-dYkSeHgCBAOTbfbWDo4-Qs8NntET0JreCWcRzlfw",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "  "
+				},
 				"url": {
 					"raw": "http://localhost:3000/users",
 					"protocol": "http",
@@ -25,33 +42,31 @@
 			"response": []
 		},
 		{
-			"name": "UPDATE USER",
+			"name": "UPDATE USERNAME BY USER",
 			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "urlencoded",
-					"urlencoded": [
+				"auth": {
+					"type": "bearer",
+					"bearer": [
 						{
-							"key": "username",
-							"value": "test222",
-							"type": "text"
-						},
-						{
-							"key": "password",
-							"value": "test5",
-							"type": "text"
-						},
-						{
-							"key": "emre",
-							"value": "emre",
-							"type": "text",
-							"disabled": true
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywidXNlcm5hbWUiOiJoZWxvYSIsInJvbGUiOiJ1c2VyIiwiY3JlYXRlZEF0IjoiMjAyMC0xMC0xMlQyMDoyODo0NS44MzVaIiwidXBkYXRlZEF0IjoiMjAyMC0xMC0xNFQxNDoyNjo1Mi4xOTRaIiwiaWF0IjoxNjAyNjg3MTcwLCJleHAiOjE2MDMyOTE5NzB9.5BTSQdxk9QvvgPPWsK4ItJSwxLrWFd_8T3O64xyC-VQ",
+							"type": "string"
 						}
 					]
 				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":3,\r\n    \"username\":\"heloa\",\r\n    \"password\":\"eeeee\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "http://localhost:3000/users/1",
+					"raw": "http://localhost:3000/users/username/3",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -59,7 +74,8 @@
 					"port": "3000",
 					"path": [
 						"users",
-						"1"
+						"username",
+						"3"
 					],
 					"query": [
 						{
@@ -78,27 +94,31 @@
 			"response": []
 		},
 		{
-			"name": "DELETE USER",
+			"name": "DELETE USER BY ADMIN",
 			"request": {
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "urlencoded",
-					"urlencoded": [
+				"auth": {
+					"type": "bearer",
+					"bearer": [
 						{
-							"key": "username",
-							"value": "test2",
-							"type": "text"
-						},
-						{
-							"key": "password",
-							"value": "asd",
-							"type": "text"
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsInVzZXJuYW1lIjoiZW1yZSIsInJvbGUiOiJhZG1pbiIsImNyZWF0ZWRBdCI6IjIwMjAtMTAtMTNUMTU6MTM6MjIuODQ1WiIsInVwZGF0ZWRBdCI6IjIwMjAtMTAtMTNUMTU6MTM6MjIuODQ1WiIsImlhdCI6MTYwMjY4NjQyMywiZXhwIjoxNjAzMjkxMjIzfQ.87IGsVhhZ6tBEsZx4h9KKHnzLqsQIBHHVae4DoDs_hE",
+							"type": "string"
 						}
 					]
 				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":5\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "http://localhost:3000/users/4",
+					"raw": "http://localhost:3000/users/admin",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -106,31 +126,25 @@
 					"port": "3000",
 					"path": [
 						"users",
-						"4"
+						"admin"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "POST USER",
+			"name": "POST CREATE USER",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
-					"mode": "urlencoded",
-					"urlencoded": [
-						{
-							"key": "username",
-							"value": "asda",
-							"type": "text"
-						},
-						{
-							"key": "password",
-							"value": "asd",
-							"type": "text"
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"test\",\r\n    \"password\":\"test\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
 						}
-					]
+					}
 				},
 				"url": {
 					"raw": "http://localhost:3000/users",
@@ -149,10 +163,20 @@
 		{
 			"name": "GET USER BY ID",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUsInVzZXJuYW1lIjoidGVzdCIsInJvbGUiOiJ1c2VyIiwiY3JlYXRlZEF0IjoiMjAyMC0xMC0xNFQxMTo0NjowNC4yNjJaIiwidXBkYXRlZEF0IjoiMjAyMC0xMC0xNFQxMTo0NjowNC4yNjJaIiwiaWF0IjoxNjAyNjg2Nzc0LCJleHAiOjE2MDMyOTE1NzR9.LQ-pAnPKK3KYl0S9xoWMeqtldd86ClEusQ1Fat8vA_A",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/users/5",
+					"raw": "http://localhost:3000/users/6",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -160,20 +184,30 @@
 					"port": "3000",
 					"path": [
 						"users",
-						"5"
+						"6"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "LOGIN USER",
+			"name": "POST LOGIN USER",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsInVzZXJuYW1lIjoiZW1yZSIsInJvbGUiOiJhZG1pbiIsImNyZWF0ZWRBdCI6IjIwMjAtMTAtMTNUMTU6MTM6MjIuODQ1WiIsInVwZGF0ZWRBdCI6IjIwMjAtMTAtMTNUMTU6MTM6MjIuODQ1WiIsImlhdCI6MTYwMjYxNjI3MCwiZXhwIjoxNjAzMjIxMDcwfQ.WX-dYkSeHgCBAOTbfbWDo4-Qs8NntET0JreCWcRzlfw",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"username\":\"eree\",\r\n    \"password\":\"1234\"\r\n}",
+					"raw": "{\r\n    \"username\":\"emre\",\r\n    \"password\":\"3333\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -190,6 +224,136 @@
 					"path": [
 						"users",
 						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UPDATE PASSWORD BY USER",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywidXNlcm5hbWUiOiJoZWxvYSIsInJvbGUiOiJ1c2VyIiwiY3JlYXRlZEF0IjoiMjAyMC0xMC0xMlQyMDoyODo0NS44MzVaIiwidXBkYXRlZEF0IjoiMjAyMC0xMC0xNFQxNDoyNjo1Mi4xOTRaIiwiaWF0IjoxNjAyNjg3MTcwLCJleHAiOjE2MDMyOTE5NzB9.5BTSQdxk9QvvgPPWsK4ItJSwxLrWFd_8T3O64xyC-VQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":3,\r\n    \"username\":\"heloa\",\r\n    \"password\":\"1111\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/users/password/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"password",
+						"3"
+					],
+					"query": [
+						{
+							"key": "usernam",
+							"value": "test",
+							"disabled": true
+						},
+						{
+							"key": "desc",
+							"value": "test",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE USER BY ADMIN",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsInVzZXJuYW1lIjoiZW1yZSIsInJvbGUiOiJhZG1pbiIsImNyZWF0ZWRBdCI6IjIwMjAtMTAtMTNUMTU6MTM6MjIuODQ1WiIsInVwZGF0ZWRBdCI6IjIwMjAtMTAtMTNUMTU6MTM6MjIuODQ1WiIsImlhdCI6MTYwMjY4OTQ0MSwiZXhwIjoxNjAzMjk0MjQxfQ.AykM1_pKUeZBxEHYixcfXcEJzDuxDr-3HmorsQB4_5k",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":4,\r\n    \"username\":\"ali\",\r\n    \"role\":\"user\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/users/admin",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"admin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UPDATE USER BY ADMIN",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsInVzZXJuYW1lIjoiZW1yZSIsInJvbGUiOiJhZG1pbiIsImNyZWF0ZWRBdCI6IjIwMjAtMTAtMTNUMTU6MTM6MjIuODQ1WiIsInVwZGF0ZWRBdCI6IjIwMjAtMTAtMTNUMTU6MTM6MjIuODQ1WiIsImlhdCI6MTYwMjY4OTQ0MSwiZXhwIjoxNjAzMjk0MjQxfQ.AykM1_pKUeZBxEHYixcfXcEJzDuxDr-3HmorsQB4_5k",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":4,\r\n    \"username\":\"ali\",\r\n    \"role\":\"user\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/users/admin",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"admin"
 					]
 				}
 			},
