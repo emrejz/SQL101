@@ -86,4 +86,13 @@ export class UserController {
       catchError(err => of({ error: err.message })),
     );
   }
+  @hasRoles('admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Put()
+  updateUser(@Body() user: IUser): Observable<IUser | { error: string }> {
+    return this.userService.updateUser(user).pipe(
+      map(res => res),
+      catchError(err => of({ error: err.message })),
+    );
+  }
 }
