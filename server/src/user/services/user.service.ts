@@ -36,26 +36,27 @@ export class UserService {
         'Username and password lengths must be between 3 and 10 characters!',
     });
   }
-  findOne(id: number): Observable<IUser> {
+  findUser(id: number): Observable<IUser> {
     return from(this.userRepository.findOne(id)).pipe(
       map((user: IUser) => this.safeUserResponse(user)),
     );
   }
-  findAll(): Observable<IUser[]> {
+  findAllUser(): Observable<IUser[]> {
     return from(this.userRepository.find()).pipe(
       map((users: IUser[]) => {
         return users.map((user: IUser) => this.safeUserResponse(user));
       }),
     );
   }
-  deleteOne(id: number): Observable<IUser> {
-    return from(this.findOne(id)).pipe(
+  deleteUser(id: number): Observable<IUser> {
+    return from(this.userRepository.findOne(id)).pipe(
       switchMap((user: IUser) => {
         return from(this.userRepository.delete(id)).pipe(map(res => user));
       }),
     );
   }
-  updateOne(
+
+  updateUsername(
     id: number,
     { username }: IUser,
   ): Observable<IUser | { error: string }> {
@@ -84,7 +85,48 @@ export class UserService {
       error: 'Username length must be between 3 and 10 characters!',
     });
   }
-
+  updatePassword(
+    id: number,
+    { password }: IUser,
+  ): Observable<IUser | { error: string }> {
+    if (password) {
+      password = password.trim();
+      if (password.length > 3) {
+        return this.authService.hashPassword(password).pipe(
+          switchMap((hashedPassword: string) =>
+            from(
+              this.userRepository.update(id, {
+                password: hashedPassword,
+                updatedAt: new Date(),
+              }),
+            ).pipe(map(res => ({ id }))),
+          ),
+        );
+      }
+    }
+    return of({
+      error: 'Password must be at least 4 characters!',
+    });
+  }
+  updateUser(user: IUser): Observable<IUser | { error: string }> {
+    const { password, createdAt, ...data } = user;
+    return from(this.userRepository.findOne({ username: data.username })).pipe(
+      switchMap(result => {
+        if (!result) {
+          return from(
+            this.userRepository.update(data.id, {
+              ...data,
+              updatedAt: new Date(),
+            }),
+          ).pipe(map(res => data));
+        } else {
+          return of({
+            error: 'Username already exists. Please try another one!',
+          });
+        }
+      }),
+    );
+  }
   login({ username, password }: IUser): Observable<string> {
     return from(this.userRepository.findOne({ username })).pipe(
       switchMap((user: IUser) => {

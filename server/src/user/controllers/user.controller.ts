@@ -21,6 +21,30 @@ import { UserIdGuard } from 'src/auth/guards/userId.guard';
 export class UserController {
   constructor(private userService: UserService) {}
 
+  @hasRoles(EUserRole.admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Delete('admin')
+  deleteUserByAdmin(
+    @Body() { id }: IUser,
+  ): Observable<IUser | { error: string }> {
+    return this.userService.deleteUser(id).pipe(
+      map(res => res),
+      catchError(err => of({ error: err.message })),
+    );
+  }
+
+  @hasRoles(EUserRole.admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Put('admin')
+  updateUserByAdmin(
+    @Body() user: IUser,
+  ): Observable<IUser | { error: string }> {
+    return this.userService.updateUser(user).pipe(
+      map(res => res),
+      catchError(err => of({ error: err.message })),
+    );
+  }
+
   @Post()
   create(@Body() user: IUser): Observable<IUser | { error: string }> {
     return this.userService.create(user).pipe(
@@ -28,6 +52,7 @@ export class UserController {
       catchError(err => of({ error: err.message })),
     );
   }
+
   @Post('login')
   login(
     @Body() user: IUser,
@@ -38,19 +63,20 @@ export class UserController {
     );
   }
 
-  @UseGuards(JwtAuthGuard, UserIdGuard)
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
-  findOne(@Param('id') id: number): Observable<IUser | { error: string }> {
-    return this.userService.findOne(id).pipe(
+  findUser(@Param('id') id: number): Observable<IUser | { error: string }> {
+    return this.userService.findUser(id).pipe(
       map(res => res),
       catchError(err => of({ error: err.message })),
     );
   }
+
   @hasRoles(EUserRole.admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
-  findAll(): Observable<IUser[] | { error: string }> {
-    return this.userService.findAll().pipe(
+  findAllUser(): Observable<IUser[] | { error: string }> {
+    return this.userService.findAllUser().pipe(
       map(res => res),
       catchError(err => of({ error: err.message })),
     );
@@ -58,19 +84,34 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard, UserIdGuard)
   @Delete(':id')
-  deleteOne(@Param('id') id: number): Observable<IUser | { error: string }> {
-    return this.userService.deleteOne(id).pipe(
+  deleteUserByUser(
+    @Param('id') id: number,
+  ): Observable<IUser | { error: string }> {
+    return this.userService.deleteUser(id).pipe(
       map(res => res),
       catchError(err => of({ error: err.message })),
     );
   }
+
   @UseGuards(JwtAuthGuard, UserIdGuard)
-  @Put(':id')
-  updateOne(
+  @Put('username/:id')
+  updateUsername(
     @Param('id') id: number,
     @Body() user: IUser,
   ): Observable<IUser | { error: string }> {
-    return this.userService.updateOne(id, user).pipe(
+    return this.userService.updateUsername(id, user).pipe(
+      map(res => res),
+      catchError(err => of({ error: err.message })),
+    );
+  }
+
+  @UseGuards(JwtAuthGuard, UserIdGuard)
+  @Put('password/:id')
+  updatePassword(
+    @Param('id') id: number,
+    @Body() user: IUser,
+  ): Observable<IUser | { error: string }> {
+    return this.userService.updatePassword(id, user).pipe(
       map(res => res),
       catchError(err => of({ error: err.message })),
     );
