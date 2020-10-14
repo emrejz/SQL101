@@ -75,4 +75,15 @@ export class UserController {
       catchError(err => of({ error: err.message })),
     );
   }
+  @UseGuards(JwtAuthGuard, UserIdGuard)
+  @Put('password/:id')
+  updatePassword(
+    @Param('id') id: number,
+    @Body() user: IUser,
+  ): Observable<IUser | { error: string }> {
+    return this.userService.updatePassword(id, user).pipe(
+      map(res => res),
+      catchError(err => of({ error: err.message })),
+    );
+  }
 }
